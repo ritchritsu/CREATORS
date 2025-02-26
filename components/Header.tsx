@@ -75,7 +75,7 @@ const Header = () => {
                 }}
               />
               <span className="text-1xl font-bold text-[rgb(255,229,138)]">
-                CREATORS AUTOMATED AND ENGINEERING SERVICES
+                CREATORS AUTOMATION AND ENGINEERING SERVICES
               </span>
             </Link>
 
