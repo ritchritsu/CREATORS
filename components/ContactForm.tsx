@@ -14,10 +14,21 @@ const ContactForm = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsLoading(false);
-    setIsSubmitted(true);
+    try {
+      const formData = new FormData(e.currentTarget);
+
+      await fetch("https://formsubmit.co/creatorsengr.services@myyahoo.com", {
+        method: "POST",
+        body: formData,
+      });
+
+      setIsLoading(false);
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setIsLoading(false);
+      alert("There was an error sending your message. Please try again later.");
+    }
   };
 
   return (
@@ -62,7 +73,12 @@ const ContactForm = () => {
                   Fill out the form below and we'll get back to you as soon as
                   possible.
                 </p>
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form
+                  action="https://formsubmit.co/creatorsengr.services@myyahoo.com"
+                  method="POST"
+                  onSubmit={handleSubmit}
+                  className="space-y-4"
+                >
                   <div className="mb-4">
                     <label
                       htmlFor="name"
@@ -123,6 +139,16 @@ const ContactForm = () => {
                       required
                     ></textarea>
                   </div>
+
+                  {/* Hidden fields for FormSubmit */}
+                  <input
+                    type="hidden"
+                    name="_subject"
+                    value="Contact Form Submission"
+                  />
+                  <input type="hidden" name="_template" value="table" />
+                  <input type="hidden" name="_captcha" value="false" />
+
                   <button
                     type="submit"
                     className="w-full bg-[#5eb1df] text-[#2f313d] font-medium px-4 py-2 rounded-md hover:bg-[#4a9dcb] transition duration-300 ease-in-out"

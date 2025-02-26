@@ -28,11 +28,11 @@ const ContactPage = () => {
                 </div>
                 <div className="flex items-center">
                   <Phone className="text-[#b7922c] mr-2" size={20} />
-                  <span>09958494580 / 09778053754</span>
+                  <span>09958494580</span>
                 </div>
                 <div className="flex items-center">
                   <Mail className="text-[#b7922c] mr-2" size={20} />
-                  <span>placeholder@gmail.com</span>
+                  <span>creatorsengr.services@myyahoo.com / jondaxroyal@gmail.com</span>
                 </div>
                 <div className="flex items-center">
                   <Clock className="text-[#b7922c] mr-2" size={20} />

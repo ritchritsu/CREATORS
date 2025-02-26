@@ -18,12 +18,32 @@ export default function InquiryForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log("Form submitted:", formData);
-    setIsVisible(false);
-    alert("Thank you for your inquiry. We'll get back to you soon!");
+
+    try {
+      // Use FormSubmit or similar service to send the email
+      const formElement = e.target as HTMLFormElement;
+      const formDataToSend = new FormData(formElement);
+
+      await fetch("https://formsubmit.co/creatorsengr.services@myyahoo.com", {
+        method: "POST",
+        body: formDataToSend,
+      });
+
+      // Reset form and show success message
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        message: "",
+      });
+      setIsVisible(false);
+      alert("Thank you for your inquiry. We'll get back to you soon!");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("There was an error sending your inquiry. Please try again later.");
+    }
   };
 
   return (
@@ -82,6 +102,12 @@ export default function InquiryForm() {
               required
             />
           </div>
+
+          {/* Hidden fields for FormSubmit */}
+          <input type="hidden" name="_subject" value="Custom Quote Request" />
+          <input type="hidden" name="_template" value="table" />
+          <input type="hidden" name="_captcha" value="false" />
+
           <div className="flex justify-end space-x-4">
             <button
               type="button"

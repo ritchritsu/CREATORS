@@ -139,6 +139,27 @@ li {
   }
 }
 
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes smoothScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
 .animate-fade-in-up {
   animation: fadeInUp 0.8s ease forwards;
   animation-play-state: running;
@@ -185,4 +206,288 @@ li {
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+.curved-section {
+  position: relative;
+  background: linear-gradient(to bottom, rgb(15, 15, 25), rgb(25, 25, 35));
+  --v-offset: 60px;
+  --curve-height: 100px;
+  overflow: hidden;
+  padding: 4rem 0;
+}
+
+.curved-section::before,
+.curved-section::after {
+  content: "";
+  display: block;
+  width: calc(100% + 2 * var(--v-offset));
+  height: var(--curve-height);
+  position: absolute;
+  left: calc(-1 * var(--v-offset));
+  right: calc(-1 * var(--v-offset));
+  z-index: 1;
+  background: linear-gradient(to bottom, rgb(15, 15, 25), rgb(20, 20, 30));
+  border-radius: 50%;
+}
+
+.curved-section::before {
+  top: calc(-0.6 * var(--curve-height));
+}
+
+.curved-section::after {
+  bottom: calc(-0.6 * var(--curve-height));
+  transform: rotate(180deg);
+  background: linear-gradient(to bottom, rgb(20, 20, 30), rgb(25, 25, 35));
+}
+
+.carousel-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  margin: 0 auto;
+  padding: 20px 0;
+  z-index: 5;
+}
+
+.carousel-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: 280px;
+  grid-gap: 24px;
+  padding: 0 10%;
+  width: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  cursor: grab;
+}
+
+.carousel-track:active {
+  cursor: grabbing;
+}
+
+.carousel-item {
+  scroll-snap-align: center;
+  width: 300px;
+  height: 280px;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 229, 138, 0.4);
+  background: rgba(25, 25, 35, 0.8);
+  transform-origin: center center;
+  transition: transform 0.3s ease;
+}
+
+.carousel-item:hover {
+  transform: scale(1.05);
+}
+
+.card-content {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.carousel-track {
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 5%,
+    black 95%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 5%,
+    black 95%,
+    transparent 100%
+  );
+}
+
+.carousel-track {
+  padding-bottom: 40px;
+  transform: perspective(1000px) rotateX(5deg);
+  transform-style: preserve-3d;
+}
+
+.carousel-wrapper::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  right: 10%;
+  height: 30px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 229, 138, 0.15) 0%,
+    transparent 70%
+  );
+  border-radius: 100%;
+  z-index: -1;
+}
+
+/* Carousel container */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  margin: 0 auto;
+  padding: 0;
+  z-index: 5;
+}
+
+/* Create the curved monitor effect */
+.carousel-container::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to right,
+    rgba(15, 15, 25, 0.95) 0%,
+    rgba(15, 15, 25, 0) 5%,
+    rgba(15, 15, 25, 0) 95%,
+    rgba(15, 15, 25, 0.95) 100%
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Carousel track */
+.carousel-track {
+  display: flex;
+  padding: 4rem 10% 8rem;
+  gap: 24px;
+  width: 100%;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  cursor: grab;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 5%,
+    black 95%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 5%,
+    black 95%,
+    transparent 100%
+  );
+}
+
+/* Apply the curved shape */
+.carousel-track {
+  position: relative;
+  transform: rotateX(10deg);
+  border-radius: 50% / 20% 20% 0 0;
+}
+
+/* Create a subtle reflection/shadow beneath */
+.carousel-track::after {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: 0;
+  height: 40px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 229, 138, 0.2) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.carousel-track:active {
+  cursor: grabbing;
+}
+
+/* Individual carousel items */
+.carousel-item {
+  flex: 0 0 300px;
+  height: 240px;
+  margin-bottom: 30px;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 229, 138, 0.4);
+  background: rgba(25, 25, 35, 0.8);
+  transform-origin: center bottom;
+  transition: transform 0.3s ease;
+  /* Apply curved positioning - different items sit at different heights */
+  transform: translateY(calc(-30px + 60px * var(--offset-factor, 0)));
+}
+
+/* Apply curved effect across items - makes some items higher than others */
+.carousel-item:nth-child(odd) {
+  --offset-factor: 0.2;
+}
+
+.carousel-item:nth-child(3n + 2) {
+  --offset-factor: -0.1;
+}
+
+.carousel-item:nth-child(4n) {
+  --offset-factor: 0.05;
+}
+
+.carousel-item:nth-child(5n) {
+  --offset-factor: -0.15;
+}
+
+.carousel-item:hover {
+  transform: translateY(calc(-30px + 60px * var(--offset-factor, 0)))
+    scale(1.05);
+  z-index: 20;
+}
+
+.card-content {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Hide scrollbar but keep functionality */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+
+.carousel-track::after {
+  content: "";
+
+  position: absolute;
+
+  left: 10%;
+
+  right: 10%;
+
+  bottom: 0;
+
+  height: 40px;
+
+  background: radial-gradient( ellipse at center, rgba(255, 255, 255, 0) 0%, transparent 70% );
+
+  border-radius: 50%;
+
+  z-index: -1;
+
 }

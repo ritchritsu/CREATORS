@@ -125,14 +125,14 @@ const Footer = () => {
                   className="fa-solid fa-phone text-[rgb(255,229,138)] mr-3 group-hover:scale-125 transition-transform duration-300"
                   aria-hidden="true"
                 ></i>
-                <span>09958494580 / 09778053754</span>
+                <span>09958494580</span>
               </li>
               <li className="flex items-center group transition-all duration-300 hover:translate-x-2">
                 <i
                   className="fa-solid fa-envelope text-[rgb(255,229,138)] mr-3 group-hover:scale-125 transition-transform duration-300"
                   aria-hidden="true"
                 ></i>
-                <span>placeholder@gmail.com</span>
+                <span>creatorsengr.services@myyahoo.com or jondaxroyal@gmail.com</span>
               </li>
             </ul>
           </div>

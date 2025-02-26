@@ -66,6 +66,10 @@ export default function Home() {
   const [isAnimating, setIsAnimating] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [autoScrollPaused, setAutoScrollPaused] = useState(false);
 
   // Function to handle next slide in benefits carousel
   const nextSlide = useCallback(() => {
@@ -89,27 +93,95 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [nextSlide]);
 
-  // Auto-scroll product carousel
+  // Mouse event handlers for dragging
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!carouselRef.current) return;
+
+    setIsDragging(true);
+    setStartX(e.pageX - carouselRef.current.offsetLeft);
+    setScrollLeft(carouselRef.current.scrollLeft);
+    setAutoScrollPaused(true);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    // Resume auto-scroll after a delay
+    setTimeout(() => setAutoScrollPaused(false), 1000);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !carouselRef.current) return;
+
+    e.preventDefault();
+    const x = e.pageX - carouselRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5; // Scroll speed multiplier
+    carouselRef.current.scrollLeft = scrollLeft - walk;
+    setScrollPosition(carouselRef.current.scrollLeft);
+  };
+
+  // Touch event handlers for mobile support
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!carouselRef.current) return;
+
+    setIsDragging(true);
+    setStartX(e.touches[0].pageX - carouselRef.current.offsetLeft);
+    setScrollLeft(carouselRef.current.scrollLeft);
+    setAutoScrollPaused(true);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || !carouselRef.current) return;
+
+    const x = e.touches[0].pageX - carouselRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    carouselRef.current.scrollLeft = scrollLeft - walk;
+    setScrollPosition(carouselRef.current.scrollLeft);
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    setTimeout(() => setAutoScrollPaused(false), 1000);
+  };
+
+  // Auto-scroll product carousel as a conveyor belt - smooth continuous motion
   useEffect(() => {
     const carousel = carouselRef.current;
-    if (!carousel) return;
+    if (!carousel || autoScrollPaused) return;
 
     let animationId: number;
-    let position = 0;
-    let direction = 1; // 1 for forward, -1 for backward
+    let lastTimestamp: number;
+    const scrollSpeed = 0.3; // Slower speed for smoother scrolling
+    let currentPosition = scrollPosition;
 
-    const animate = () => {
-      position += 0.5 * direction;
+    const animate = (timestamp: number) => {
+      if (!lastTimestamp) lastTimestamp = timestamp;
 
-      // Change direction when reaching end or start
-      if (position >= carousel.scrollWidth - carousel.clientWidth) {
-        direction = -1;
-      } else if (position <= 0) {
-        direction = 1;
+      // Calculate time elapsed since last frame
+      const elapsed = timestamp - lastTimestamp;
+
+      // Calculate smooth movement amount based on elapsed time
+      const moveAmount = scrollSpeed * (elapsed / 16);
+
+      // Increment position with constant speed (conveyor belt effect)
+      currentPosition += moveAmount;
+
+      // Handle infinite scroll - when reaching the end, loop around smoothly
+      if (currentPosition >= carousel.scrollWidth - carousel.clientWidth) {
+        // When we reach the end, reset position to start
+        // Don't immediately jump to 0, but set it to just after the beginning
+        // for a smoother transition appearance
+        currentPosition = 0.1;
       }
 
-      carousel.scrollLeft = position;
-      setScrollPosition(position);
+      // Apply the scroll position without triggering scroll events
+      carousel.scrollTo({
+        left: currentPosition,
+        behavior: "auto", // Use 'auto' instead of 'smooth' to prevent snapping
+      });
+
+      setScrollPosition(currentPosition);
+      lastTimestamp = timestamp;
+
       animationId = requestAnimationFrame(animate);
     };
 
@@ -118,7 +190,16 @@ export default function Home() {
     return () => {
       cancelAnimationFrame(animationId);
     };
-  }, []);
+  }, [autoScrollPaused]);
+
+  // Handle scroll events - decouple from animation frame
+  const handleScroll = () => {
+    if (!carouselRef.current || isDragging) return;
+    // Only update the state if we're manually scrolling
+    if (!autoScrollPaused) {
+      setScrollPosition(carouselRef.current.scrollLeft);
+    }
+  };
 
   // Calculate the correct transform to center the active slide
   const calculateTransform = () => {
@@ -153,65 +234,82 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Product Carousel Section - Moved directly below hero */}
-      <section className="py-12 overflow-hidden bg-gradient-to-b from-[rgb(15,15,25)] to-[rgb(25,25,35)] relative">
-        <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-[rgb(15,15,25)] to-transparent z-10"></div>
+      {/* Product Carousel Section - Curved Display Style */}
+      <section className="py-12 bg-[rgb(15,15,25)] relative outward-curve-section">
+        <div className="container mx-auto px-4 mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-[rgb(255,229,138)] mb-8">
+            Our Products
+          </h2>
+        </div>
 
-        {/* Curved product carousel */}
-        <div className="perspective-1000 mx-auto max-w-full py-8">
-          <div className="relative overflow-hidden">
-            <div
-              ref={carouselRef}
-              className="flex items-center gap-6 py-16 overflow-x-auto hide-scrollbar px-10"
-              style={{
-                transformStyle: "preserve-3d",
-                transform: "rotateX(3deg)",
-              }}
-            >
-              {productImages.map((image, index) => {
-                const position = index * 280 - scrollPosition;
-                const normalizedPosition = position / 1200;
-                const yPosition = Math.sin(normalizedPosition * 0.5) * 20;
-                const zPosition = Math.cos(normalizedPosition * 0.5) * 30;
-                const opacity = Math.max(
-                  0.7,
-                  1 - Math.abs(normalizedPosition * 0.6)
-                );
-
-                return (
-                  <div
-                    key={index}
-                    className="flex-shrink-0 transform transition-transform duration-300 hover:scale-110"
-                    style={{
-                      transform: `translateY(${yPosition}px) translateZ(${zPosition}px)`,
-                      opacity,
-                      zIndex: Math.round(
-                        50 - Math.abs(normalizedPosition * 20)
-                      ),
-                    }}
-                  >
-                    <div className="w-72 h-48 overflow-hidden rounded-lg shadow-xl border border-[rgba(255,229,138,0.4)] bg-[rgba(25,25,35,0.8)]">
-                      <Image
-                        src={image}
-                        alt={`Product ${index + 1}`}
-                        width={400}
-                        height={300}
-                        className="w-full h-full object-cover transition-transform hover:scale-110"
-                      />
-                    </div>
+        {/* Outward curved carousel with consistent height */}
+        <div className="carousel-container">
+          <div
+            ref={carouselRef}
+            className="carousel-track hide-scrollbar"
+            onMouseDown={handleMouseDown}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+            onMouseMove={handleMouseMove}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onScroll={handleScroll}
+          >
+            {productImages.map((image, index) => {
+              return (
+                <div key={index} className="carousel-item">
+                  <div className="card-content">
+                    <Image
+                      src={image}
+                      alt={`Product ${index + 1}`}
+                      width={500}
+                      height={400}
+                      className="w-full h-full object-cover"
+                      draggable="false"
+                    />
                   </div>
-                );
-              })}
-            </div>
-
-            {/* Subtler gradient highlights */}
-            
+                </div>
+              );
+            })}
           </div>
+        </div>
+
+        {/* Visual indicator that carousel is draggable */}
+        <div className="flex justify-center drag-indicator">
+          <span className="text-[rgb(255,229,138)]/70 text-sm flex items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 mr-1 animate-pulse"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M7.707 3.293a1 1 0 010 1.414L5.414 7H11a7 7 0 017 7v2a1 1 0 11-2 0v-2a5 5 0 00-5-5H5.414l2.293 2.293a1 1 0 11-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Drag to explore
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 ml-1 animate-pulse"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M12.293 3.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 9H9a5 5 0 00-5 5v2a1 1 0 11-2 0v-2a7 7 0 017-7h5.586l-2.293-2.293a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </span>
         </div>
       </section>
 
       {/* Why Choose Us Section - Fancy Peek Carousel */}
       <section className="py-16 bg-[rgb(15,15,25)] overflow-hidden">
+        {/* Rest of the component remains unchanged */}
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-[rgb(255,229,138)]">
             Why Choose Us
@@ -399,22 +497,186 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Additional CSS for carousel effects */}
+      {/* Updated CSS for inward-curved carousel */}
       <style jsx global>{`
-        @keyframes float {
-          0% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
-          100% {
-            transform: translateY(0px);
-          }
+        /* Hide scrollbar but keep functionality */
+        .hide-scrollbar {
+          -ms-overflow-style: none; /* IE and Edge */
+          scrollbar-width: none; /* Firefox */
         }
 
-        .curved-carousel {
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none; /* Chrome, Safari and Opera */
+        }
+
+        /* Inward curved section */
+        .outward-curve-section {
+          position: relative;
+          background: linear-gradient(
+            to bottom,
+            rgb(15, 15, 25),
+            rgb(25, 25, 35)
+          );
+          padding: 4rem 0 6rem; /* Increased bottom padding for the highlight */
+          overflow: hidden;
+          /* Prevent text selection */
+          user-select: none;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+        }
+
+        /* Create the inward curved appearance - reverse the border radius */
+        .outward-curve-section::before {
+          content: "";
+          position: absolute;
+          top: -80px;
+          left: -50%;
+          width: 200%;
+          height: 120px;
+          background: rgb(15, 15, 25);
+          border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+          z-index: 1;
+        }
+
+        .outward-curve-section::after {
+          content: "";
+          position: absolute;
+          bottom: -80px;
+          left: -50%;
+          width: 200%;
+          height: 120px;
+          background: rgb(25, 25, 35);
+          border-radius: 0 0 50% 50% / 0 0 100% 100%;
+          z-index: 1;
+        }
+
+        /* Carousel highlight that sits below the carousel */
+        .outward-curve-section::before,
+        .outward-curve-section::after {
+          pointer-events: none; /* Ensure the curves don't interfere with interactions */
+        }
+
+        /* Add a highlight underneath the carousel */
+        .carousel-container::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: -30px; /* Position below the carousel */
+          height: 2px;
+          background: linear-gradient(
+            90deg,
+            rgba(255, 229, 138, 0) 0%,
+            rgba(255, 229, 138, 0.5) 50%,
+            rgba(255, 229, 138, 0) 100%
+          );
+          width: 80%;
+          margin: 0 auto;
+          z-index: 4; /* Above the curved section but below the carousel */
+          box-shadow: 0 0 20px 5px rgba(255, 229, 138, 0.3);
+          border-radius: 100%;
+        }
+
+        /* Carousel container */
+        .carousel-container {
+          position: relative;
+          width: 100%;
+          max-width: 100%;
+          overflow: hidden;
+          padding: 30px 10% 20px; /* Reduced bottom padding */
+          z-index: 5;
+          perspective: 1000px;
+          margin-bottom: 40px; /* Add space for the highlight underneath */
+        }
+
+        /* Curved carousel track - conveyor belt style */
+        .carousel-track {
+          display: flex;
+          gap: 20px;
+          padding: 30px 40px;
+          overflow-x: auto;
+          cursor: grab;
           transform-style: preserve-3d;
+          transform: rotateX(10deg);
+          perspective-origin: center bottom;
+          will-change: transform, scroll-position;
+          scroll-behavior: auto; /* Use auto instead of smooth to prevent snapping */
+          -webkit-overflow-scrolling: touch; /* Better touch scrolling on iOS */
+        }
+
+        /* Disable any snap points that might cause jumps */
+        .carousel-item {
+          scroll-snap-align: none;
+        }
+
+        /* Make all items same fixed height with consistent 3D positioning */
+        .carousel-item {
+          flex: 0 0 300px;
+          height: 220px;
+          border-radius: 8px;
+          overflow: hidden;
+          background: rgba(25, 25, 35, 0.8);
+          transform-style: preserve-3d;
+          position: relative;
+          transition: transform 0.3s ease;
+          user-select: none;
+          -webkit-user-select: none;
+        }
+
+        /* Items in different positions have different translations to create curved effect */
+        .carousel-item:nth-child(3n) {
+          transform: translateY(15px) translateZ(-20px);
+        }
+
+        .carousel-item:nth-child(3n + 1) {
+          transform: translateY(5px) translateZ(-10px);
+        }
+
+        .carousel-item:nth-child(3n + 2) {
+          transform: translateY(10px) translateZ(-15px);
+        }
+
+        /* Hover effect shouldn't change the height */
+        .carousel-item:hover {
+          transform: scale(1.05) translateZ(10px);
+          z-index: 10;
+        }
+
+        .card-content {
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          position: relative;
+        }
+
+        /* Ensure images maintain aspect ratio while filling container */
+        .card-content img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+          transition: transform 0.5s ease;
+        }
+
+        .card-content:hover img {
+          transform: scale(1.1);
+        }
+
+        /* Prevent image dragging */
+        img {
+          -webkit-user-drag: none;
+          -khtml-user-drag: none;
+          -moz-user-drag: none;
+          -o-user-drag: none;
+          user-drag: none;
+        }
+
+        /* Move the drag indicator outside and below the carousel */
+        .drag-indicator {
+          margin-top: 10px; /* Space from carousel */
+          position: relative;
+          z-index: 4;
         }
       `}</style>
     </div>

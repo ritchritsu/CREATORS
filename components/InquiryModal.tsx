@@ -40,30 +40,25 @@ const InquiryModal = () => {
       setTimeout(() => {
         setIsOpen(false);
         setIsSubmitted(false);
+        setIsSubmitting(false);
       }, 3000);
     } catch (error) {
       console.error("Error submitting form:", error);
-    } finally {
       setIsSubmitting(false);
+      // Handle error case
     }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm"
-      onClick={(e) => {
-        // Close when clicking outside the modal
-        if (e.target === e.currentTarget) setIsOpen(false);
-      }}
-    >
-      <div className="bg-[rgba(25,25,35,0.85)] p-8 rounded-lg shadow-2xl w-full max-w-md relative border border-[rgb(255,229,138)]/20 backdrop-blur-md">
+    <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center">
+      <div className="bg-[rgb(15,15,25)] rounded-lg p-6 w-full max-w-md relative border border-[rgb(255,229,138)]/30">
         <button
           onClick={() => setIsOpen(false)}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white"
+          className="absolute top-3 right-3 text-gray-400 hover:text-white"
         >
-          <X size={24} />
+          <X size={20} />
         </button>
 
         <h2 className="text-2xl font-bold mb-6 text-[rgb(255,229,138)]">
@@ -98,7 +93,7 @@ const InquiryModal = () => {
           </div>
         ) : (
           <form
-            action="https://formsubmit.co/ritchtopia@gmail.com"
+            action="https://formsubmit.co/creatorsengr.services@myyahoo.com"
             method="POST"
             className="space-y-4"
             onSubmit={handleSubmit}
@@ -137,15 +132,15 @@ const InquiryModal = () => {
 
             <div>
               <label
-                htmlFor="product"
+                htmlFor="phone"
                 className="block text-sm font-medium text-gray-300 mb-1"
               >
-                Product of Interest
+                Phone Number
               </label>
               <input
-                type="text"
-                id="product"
-                name="product"
+                type="tel"
+                id="phone"
+                name="phone"
                 className="w-full px-3 py-2 bg-[rgba(30,30,40,0.7)] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-[rgb(255,229,138)]/50 border border-gray-700"
                 required
               />
