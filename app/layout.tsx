@@ -19,7 +19,7 @@ const robotoSlab = Roboto_Slab({
 });
 
 export const metadata = {
-  title: "CREATORS Automation and Engineering Services",
+  title: "CREATORS Automated and Engineering Services",
   description:
     "Industrial machinery manufacturing and automation services based in the Philippines",
   generator: "v0.dev",
