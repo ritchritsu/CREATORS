@@ -152,11 +152,11 @@ const Footer = () => {
                   aria-hidden="true"
                 ></i>
                 <div>
-                  <div>JONATHAN P. DACANAY - CEO</div>
+                  <div>Jonathan P. Dacanay - CEO</div>
                   <div>
-                    ENGR. EMMANUEL DATU – TECHNICAL/SUPPLY CHAIN MANAGER
+                    Engr. Emmanuel Datu – Technical/Supply Chain Manager
                   </div>
-                  <div>AIBEE R. DACANAY – SALES AND MARKETING MANAGER</div>
+                  <div>Aibee Marie R. Dacanay – Sales and Marketing Manager</div>
                 </div>
               </li>
             </ul>

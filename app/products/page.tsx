@@ -96,20 +96,15 @@ const ProductsPage = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Image Modal with smooth transitions - transparent background */}
+      {/* Image Modal with styling consistent with the header inquire popup */}
       {selectedImage && (
         <div
-          className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ease-in-out ${
-            isModalOpen
-              ? "backdrop-blur-sm bg-black/40 opacity-100"
-              : "opacity-0"
-          }`}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-sm transition-all duration-300 ease-in-out"
           onClick={closeImageModal}
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}
         >
           {/* Close button */}
           <button
-            className="absolute top-4 right-4 z-[60] text-white p-3 rounded-full bg-black bg-opacity-30 hover:bg-opacity-50 transition-all duration-200"
+            className="absolute top-4 right-4 z-[60] text-white p-3 rounded-full hover:text-[rgb(255,229,138)] transition-colors"
             onClick={(e) => {
               e.stopPropagation();
               closeImageModal();
@@ -129,8 +124,7 @@ const ProductsPage = () => {
             <img
               src={selectedImage}
               alt="Enlarged view"
-              className="max-h-[60vh] max-w-[80vw] md:max-w-[70vw] object-contain"
-              style={{ background: "transparent" }}
+              className="max-h-[60vh] max-w-[80vw] md:max-w-[70vw] object-contain rounded border border-[rgb(255,229,138)]/10"
             />
           </div>
         </div>
