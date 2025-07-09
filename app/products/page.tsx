@@ -1,76 +1,141 @@
-import Image from "next/image";
-import QuoteButton from "@/components/ui/QuoteButton";
+"use client";
 
-const products = [
-  {
-    category: "Category 1",
-    items: [
-      { name: "Product 1", image: "/IMAGES/1.jpg" },
-      { name: "Product 2", image: "/IMAGES/2.jpg" },
-      { name: "Product 3", image: "/IMAGES/3.jpg" },
-    ],
-  },
-  {
-    category: "Category 2",
-    items: [
-      { name: "Product 1", image: "/IMAGES/4.jpg" },
-      { name: "Product 2", image: "/IMAGES/5.jpg" },
-      { name: "Product 3", image: "/IMAGES/6.jpg" },
-    ],
-  },
-  {
-    category: "Category 3",
-    items: [
-      { name: "Product 1", image: "/IMAGES/7.jpg" },
-      { name: "Product 2", image: "/IMAGES/8.jpg" },
-      { name: "Product 3", image: "/IMAGES/9.jpg" },
-    ],
-  },
-  {
-    category: "Category 4",
-    items: [
-      { name: "Product 1", image: "/IMAGES/10.jpg" },
-      { name: "Product 2", image: "/IMAGES/11.jpg" },
-      { name: "Product 3", image: "/IMAGES/12.jpg" },
-    ],
-  },
-  {
-    category: "Category 5",
-    items: [
-      { name: "Product 1", image: "/IMAGES/13.jpg" },
-      { name: "Product 2", image: "/IMAGES/14.jpg" },
-      { name: "Product 3", image: "/IMAGES/15.jpg" },
-    ],
-  },
-  {
-    category: "Category 6",
-    items: [
-      { name: "Product 1", image: "/IMAGES/16.jpg" },
-      { name: "Product 2", image: "/IMAGES/17.jpg" },
-      { name: "Product 3", image: "/IMAGES/18.jpg" },
-    ],
-  },
-  {
-    category: "Category 7",
-    items: [
-      { name: "Product 1", image: "/IMAGES/19.jpg" },
-      { name: "Product 2", image: "/IMAGES/20.jpg" },
-      { name: "Product 3", image: "/IMAGES/21.jpg" },
-    ],
-  },
-  {
-    category: "Category 8",
-    items: [
-      { name: "Product 1", image: "/IMAGES/22.jpg" },
-      { name: "Product 2", image: "/IMAGES/23.jpg" },
-      { name: "Product 3", image: "/IMAGES/24.jpg" },
-    ],
-  },
-];
+import Image from "next/image";
+import { useState, useCallback, useEffect } from "react";
+import QuoteButton from "@/components/ui/QuoteButton";
+import { X } from "lucide-react";
+
+// Create image objects
+const imageList = Array.from({ length: 58 }, (_, i) => i + 1);
 
 const ProductsPage = () => {
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openImageModal = (imageSrc, index) => {
+    setSelectedImage(imageSrc);
+    setSelectedIndex(index);
+    // Prevent body scrolling when modal is open
+    document.body.style.overflow = "hidden";
+    setTimeout(() => {
+      setIsModalOpen(true);
+    }, 10);
+  };
+
+  const closeImageModal = () => {
+    setIsModalOpen(false);
+    setTimeout(() => {
+      setSelectedImage(null);
+      setSelectedIndex(null);
+      // Restore scrolling
+      document.body.style.overflow = "auto";
+    }, 300); // Match this with the transition duration
+  };
+
+  const showPreviousImage = () => {
+    if (selectedIndex === null) return;
+
+    // Find the previous visible image (not hidden)
+    let prevIndex = selectedIndex - 1;
+    while (prevIndex >= 0) {
+      const imgNumber = prevIndex + 1;
+      const imgSrc = `/IMAGES/${imgNumber}.jpg`;
+      setSelectedImage(imgSrc);
+      setSelectedIndex(prevIndex);
+      break;
+    }
+
+    // If we've gone below 0, loop back to the end
+    if (prevIndex < 0) {
+      const lastIndex = imageList.length - 1;
+      setSelectedImage(`/IMAGES/${lastIndex + 1}.jpg`);
+      setSelectedIndex(lastIndex);
+    }
+  };
+
+  const showNextImage = () => {
+    if (selectedIndex === null) return;
+
+    // Find the next visible image (not hidden)
+    let nextIndex = selectedIndex + 1;
+    while (nextIndex < imageList.length) {
+      const imgNumber = nextIndex + 1;
+      const imgSrc = `/IMAGES/${imgNumber}.jpg`;
+      setSelectedImage(imgSrc);
+      setSelectedIndex(nextIndex);
+      break;
+    }
+
+    // If we've gone past the end, loop back to the beginning
+    if (nextIndex >= imageList.length) {
+      setSelectedImage(`/IMAGES/1.jpg`);
+      setSelectedIndex(0);
+    }
+  };
+
+  // Handle keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!selectedImage) return;
+
+      if (e.key === "Escape") {
+        closeImageModal();
+      } else if (e.key === "ArrowLeft") {
+        showPreviousImage();
+      } else if (e.key === "ArrowRight") {
+        showNextImage();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedImage, selectedIndex]);
+
   return (
     <div className="min-h-screen">
+      {/* Image Modal with smooth transitions - transparent background */}
+      {selectedImage && (
+        <div
+          className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ease-in-out ${
+            isModalOpen
+              ? "backdrop-blur-sm bg-black/40 opacity-100"
+              : "opacity-0"
+          }`}
+          onClick={closeImageModal}
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.4)" }}
+        >
+          {/* Close button */}
+          <button
+            className="absolute top-4 right-4 z-[60] text-white p-3 rounded-full bg-black bg-opacity-30 hover:bg-opacity-50 transition-all duration-200"
+            onClick={(e) => {
+              e.stopPropagation();
+              closeImageModal();
+            }}
+            aria-label="Close"
+          >
+            <X size={24} />
+          </button>
+
+          {/* Main image container */}
+          <div
+            className={`relative transition-all duration-300 ${
+              isModalOpen ? "scale-100 opacity-100" : "scale-95 opacity-0"
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={selectedImage}
+              alt="Enlarged view"
+              className="max-h-[60vh] max-w-[80vw] md:max-w-[70vw] object-contain"
+              style={{ background: "transparent" }}
+            />
+          </div>
+        </div>
+      )}
+
       <section className="section bg-gray-900">
         <div className="container">
           <h1 className="text-4xl md:text-5xl font-bold mb-8 text-center">
@@ -80,32 +145,18 @@ const ProductsPage = () => {
             Discover our range of high-quality industrial machinery and custom
             fabrication services.
           </p>
-          {products.map((category, index) => (
-            <div key={index} className="mb-16">
-              <h2 className="text-3xl font-bold mb-6 text-[#b7922c]">
-                {category.category}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {category.items.map((item, itemIndex) => (
-                  <div
-                    key={itemIndex}
-                    className="bg-[#0f0f19] rounded-lg overflow-hidden shadow-lg"
-                  >
-                    <Image
-                      src={item.image || "/IMAGES/placeholder.jpg"}
-                      alt={item.name}
-                      width={400}
-                      height={300}
-                      className="w-full h-48 object-cover"
-                    />
-                    <div className="p-4">
-                      <h3 className="text-xl font-semibold">{item.name}</h3>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
+
+          {/* Simple grid of all images without categories */}
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+            {imageList.map((num, index) => (
+              <ProductImage
+                key={num}
+                imageNumber={num}
+                index={index}
+                onImageClick={openImageModal}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -114,7 +165,7 @@ const ProductsPage = () => {
           <h2 className="text-3xl font-bold mb-8 text-center">
             Additional Services
           </h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-gray-900 p-6 rounded-lg shadow-lg">
               <h3 className="text-xl font-semibold mb-4 text-[#b7922c]">
                 HVAC & Plumbing
@@ -160,6 +211,45 @@ const ProductsPage = () => {
           </div>
         </div>
       </section>
+    </div>
+  );
+};
+
+// Client component to handle image loading with fallbacks
+const ProductImage = ({ imageNumber, index, onImageClick }) => {
+  const [imgSrc, setImgSrc] = useState(`/IMAGES/${imageNumber}.jpg`);
+  const [hidden, setHidden] = useState(false);
+
+  const handleError = useCallback(() => {
+    if (imgSrc.includes(".jpg")) {
+      // Try PNG if JPG fails
+      setImgSrc(`/IMAGES/${imageNumber}.png`);
+    } else if (imgSrc.includes(".png")) {
+      // If both JPG and PNG fail, hide the component entirely
+      setHidden(true);
+    }
+  }, [imgSrc, imageNumber]);
+
+  // If both image formats failed to load, don't render anything
+  if (hidden) {
+    return null;
+  }
+
+  return (
+    <div
+      className="bg-[#0f0f19] rounded-lg overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105 cursor-pointer"
+      onClick={() => onImageClick(imgSrc, index)}
+    >
+      <div className="relative w-full h-40 sm:h-48">
+        <Image
+          src={imgSrc}
+          alt={`Project image ${imageNumber}`}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+          className="object-cover"
+          onError={handleError}
+        />
+      </div>
     </div>
   );
 };

@@ -484,7 +484,7 @@ export default function Home() {
 
               {/* The actual image that loads under the animation */}
               <Image
-                src="/IMAGES/clients.png"
+                src="/IMAGES/clientsTwo.png"
                 alt="Our Clients"
                 width={1900}
                 height={400}

@@ -17,16 +17,17 @@ const aboutSections = [
     icon: faBuildingUser,
     title: "OUR VISION",
     description:
-      "To empower Filipino communities by providing sustainable, high-quality machinery that fulfills the specific needs of industrial clients, while creating valuable job opportunities for local residents.",
+      "To provide quality and sustainable machines for industrial needs per client requirement.",
     image: "/IMAGES/vision.jpg",
   },
   {
     icon: faHandshake,
     title: "OUR MISSION",
-    description:
-      "At Creators Automated and Engineering Services, we are dedicated to crafting exceptional, long-lasting metalwork and industrial solutions through meticulous design, precision manufacturing, and exceptional customer service. We strive to be a reliable partner for our clients, empowering them to achieve their project goals efficiently and exceeding their expectations.",
+    description: `To collaborate with local and international manufacturers and SME’s by using quality and precision machines. 
+  To be able to offer low to medium cost machines for start-up businesses and provide quality products.`,
     image: "/IMAGES/mission.jpg",
   },
+  
   {
     icon: faUsers,
     title: "THE CREATORS FAMILY",
@@ -87,8 +88,8 @@ const AboutPage = () => {
     <div className="min-h-screen">
       {/* Hero Section with Static Background (like Home page) */}
       <section
-        className="hero relative h-[80vh] flex items-center justify-center bg-fixed bg-cover bg-center"
-        style={{ backgroundImage: 'url("/IMAGES/rcpd1.jpg")' }}
+        className="hero relative h-[82vh] flex items-center justify-center bg-fixed bg-cover bg-center"
+        style={{ backgroundImage: 'url("/IMAGES/rcdp1.png")' }}
       >
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="container relative z-10 text-center mx-auto px-4">
@@ -237,21 +238,16 @@ const AboutPage = () => {
               Our History
             </h2>
             <p className="text-lg mb-6 text-[#feffdb]">
-              Founded with a vision to serve the diverse industrial needs of the
-              Philippines, Creators Fabrication Enterprises Co. has grown from a
-              small metal fabrication shop into a comprehensive industrial
-              solutions provider.
+              Founded in 2020, Creators Automated and Engineering Services is a local manufacturer of precision machinery components and machines for industrial set up such as filling machines, mixing machines, mixing tanks, jacketed kettle, conveyor, soap extruders, stamping machines, pipe laying, R.O system, water waste disposal, cosmetic machines, electrical components and programs. Today our workshop is located at Antipolo at 500 square meters. We also offer HHO, our new machine line up for industrial fuel saver for gasoline, diesel, and LPG.
+            </p>
+            <h2 className="text-3xl font-bold mb-8 text-[rgb(255,229,138)]">
+              Factory Facilities
+            </h2>
+            <p className="text-lg mb-6 text-[#feffdb]">
+              Lathe machine, milling machine, machinery equipments, grinders, and surface grinders, welding machines.
             </p>
             <p className="text-lg mb-6 text-[#feffdb]">
-              We've built our reputation on delivering high-quality products and
-              services, maintaining strong relationships with our clients, and
-              continuously improving our capabilities to meet evolving industry
-              demands.
-            </p>
-            <p className="text-lg text-[#feffdb]">
-              Today, we stand as a trusted partner for businesses across various
-              industries, providing custom solutions that help our clients
-              achieve their goals and overcome challenges.
+              Our customers are mostly from domestic areas in the Philippines.
             </p>
           </div>
         </div>

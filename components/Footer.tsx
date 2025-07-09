@@ -115,24 +115,49 @@ const Footer = () => {
                   className="fa-solid fa-location-dot text-[rgb(255,229,138)] mt-1 mr-3 group-hover:scale-125 transition-transform duration-300"
                   aria-hidden="true"
                 ></i>
-                <span>
-                  #58 Marilaque Highway Sitio, Cabading Brgy San Jose, Antipolo
-                  City, Rizal 1870, Philippines
-                </span>
+                <div>
+                  <div className="mb-2">
+                    <strong>Workshop:</strong> #58 Marilaque Highway Sitio,
+                    Cabading Brgy San Jose, Antipolo City, Rizal 1870,
+                    Philippines
+                  </div>
+                  <div>
+                    <strong>Office:</strong> B29 L13 2nd Floor Pedracio St.,
+                    Barangay Dalig, Antipolo, Rizal
+                  </div>
+                </div>
               </li>
-              <li className="flex items-center group transition-all duration-300 hover:translate-x-2">
+              <li className="flex items-start group transition-all duration-300 hover:translate-x-2">
                 <i
-                  className="fa-solid fa-phone text-[rgb(255,229,138)] mr-3 group-hover:scale-125 transition-transform duration-300"
+                  className="fa-solid fa-phone text-[rgb(255,229,138)] mt-1 mr-3 group-hover:scale-125 transition-transform duration-300"
                   aria-hidden="true"
                 ></i>
-                <span>09958494580</span>
+                <div>
+                  <div>Landline: 02-82341680</div>
+                  <div>Celphone: 09958494580/09454922747</div>
+                </div>
               </li>
               <li className="flex items-center group transition-all duration-300 hover:translate-x-2">
                 <i
                   className="fa-solid fa-envelope text-[rgb(255,229,138)] mr-3 group-hover:scale-125 transition-transform duration-300"
                   aria-hidden="true"
                 ></i>
-                <span>creatorsengr.services@myyahoo.com or jondaxroyal@gmail.com</span>
+                <span>
+                  creatorsengr.services@myyahoo.com or jondaxroyal@yahoo.com
+                </span>
+              </li>
+              <li className="flex items-start group transition-all duration-300 hover:translate-x-2">
+                <i
+                  className="fa-solid fa-users text-[rgb(255,229,138)] mt-1 mr-3 group-hover:scale-125 transition-transform duration-300"
+                  aria-hidden="true"
+                ></i>
+                <div>
+                  <div>JONATHAN P. DACANAY - CEO</div>
+                  <div>
+                    ENGR. EMMANUEL DATU – TECHNICAL/SUPPLY CHAIN MANAGER
+                  </div>
+                  <div>AIBEE R. DACANAY – SALES AND MARKETING MANAGER</div>
+                </div>
               </li>
             </ul>
           </div>

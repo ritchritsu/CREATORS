@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Users } from "lucide-react";
 
 const ContactPage = () => {
   return (
@@ -19,24 +19,55 @@ const ContactPage = () => {
                 the form, and we'll get back to you as soon as possible.
               </p>
               <div className="space-y-4">
-                <div className="flex items-center">
-                  <MapPin className="text-[#b7922c] mr-2" size={20} />
-                  <span>
-                    #58 Marilaque Highway Sitio, Cabading Brgy San Jose,
-                    Antipolo City, Rizal 1870, Philippines
-                  </span>
+                <div className="flex items-start">
+                  <MapPin
+                    className="text-[#b7922c] mr-2 mt-1 flex-shrink-0"
+                    size={20}
+                  />
+                  <div className="flex flex-col">
+                    <div className="mb-2">
+                      <strong>Workshop:</strong> #58 Marilaque Highway Sitio,
+                      Cabading Brgy San Jose, Antipolo City, Rizal 1870,
+                      Philippines
+                    </div>
+                    <div>
+                      <strong>Office:</strong> B29 L13 2nd Floor Pedracio St.,
+                      Barangay Dalig, Antipolo, Rizal
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center">
-                  <Phone className="text-[#b7922c] mr-2" size={20} />
-                  <span>09958494580</span>
+                <div className="flex items-start">
+                  <Phone
+                    className="text-[#b7922c] mr-2 mt-1 flex-shrink-0"
+                    size={20}
+                  />
+                  <div>
+                    <div>0282341680</div>
+                    <div>09958494580</div>
+                  </div>
                 </div>
                 <div className="flex items-center">
                   <Mail className="text-[#b7922c] mr-2" size={20} />
-                  <span>creatorsengr.services@myyahoo.com / jondaxroyal@gmail.com</span>
+                  <span>
+                    creatorsengr.services@myyahoo.com / jondaxroyal@gmail.com
+                  </span>
                 </div>
                 <div className="flex items-center">
                   <Clock className="text-[#b7922c] mr-2" size={20} />
                   <span>Monday - Friday: 7:00AM to 4:00PM</span>
+                </div>
+                <div className="flex items-start">
+                  <Users
+                    className="text-[#b7922c] mr-2 mt-1 flex-shrink-0"
+                    size={20}
+                  />
+                  <div>
+                    <div>JONATHAN P. DACANAY - CEO</div>
+                    <div>
+                      ENGR. EMMANUEL DATU – TECHNICAL/SUPPLY CHAIN MANAGER
+                    </div>
+                    <div>AIBEE R. DACANAY – SALES AND MARKETING MANAGER</div>
+                  </div>
                 </div>
               </div>
             </div>

@@ -38,7 +38,9 @@ const Header = () => {
                 height={20}
                 className="mr-2"
               />
-              <span className="text-sm">creatorsengr.services@myyahoo.com / jondaxroyal@gmail.com</span>
+              <span className="text-sm">
+                creatorsengr.services@myyahoo.com / jondaxroyal@gmail.com
+              </span>
             </div>
             <div className="flex items-center">
               <Image
@@ -48,7 +50,7 @@ const Header = () => {
                 height={20}
                 className="mr-2"
               />
-              <span className="text-sm">09958494580</span>
+              <span className="text-sm">0282341680</span>
             </div>
           </div>
         </div>
@@ -75,7 +77,7 @@ const Header = () => {
                 }}
               />
               <span className="text-1xl font-bold text-[rgb(255,229,138)]">
-                CREATORS AUTOMATION AND ENGINEERING SERVICES
+                CREATORS AUTOMATED AND ENGINEERING SERVICES
               </span>
             </Link>
 
