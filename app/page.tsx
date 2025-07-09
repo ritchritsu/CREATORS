@@ -69,7 +69,6 @@ export default function Home() {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
-  const [autoScrollPaused, setAutoScrollPaused] = useState(false);
 
   // Function to handle next slide in benefits carousel
   const nextSlide = useCallback(() => {
@@ -100,13 +99,10 @@ export default function Home() {
     setIsDragging(true);
     setStartX(e.pageX - carouselRef.current.offsetLeft);
     setScrollLeft(carouselRef.current.scrollLeft);
-    setAutoScrollPaused(true);
   };
 
   const handleMouseUp = () => {
     setIsDragging(false);
-    // Resume auto-scroll after a delay
-    setTimeout(() => setAutoScrollPaused(false), 1000);
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -126,7 +122,6 @@ export default function Home() {
     setIsDragging(true);
     setStartX(e.touches[0].pageX - carouselRef.current.offsetLeft);
     setScrollLeft(carouselRef.current.scrollLeft);
-    setAutoScrollPaused(true);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -140,65 +135,13 @@ export default function Home() {
 
   const handleTouchEnd = () => {
     setIsDragging(false);
-    setTimeout(() => setAutoScrollPaused(false), 1000);
   };
-
-  // Auto-scroll product carousel as a conveyor belt - smooth continuous motion
-  useEffect(() => {
-    const carousel = carouselRef.current;
-    if (!carousel || autoScrollPaused) return;
-
-    let animationId: number;
-    let lastTimestamp: number;
-    const scrollSpeed = 0.3; // Slower speed for smoother scrolling
-    let currentPosition = scrollPosition;
-
-    const animate = (timestamp: number) => {
-      if (!lastTimestamp) lastTimestamp = timestamp;
-
-      // Calculate time elapsed since last frame
-      const elapsed = timestamp - lastTimestamp;
-
-      // Calculate smooth movement amount based on elapsed time
-      const moveAmount = scrollSpeed * (elapsed / 16);
-
-      // Increment position with constant speed (conveyor belt effect)
-      currentPosition += moveAmount;
-
-      // Handle infinite scroll - when reaching the end, loop around smoothly
-      if (currentPosition >= carousel.scrollWidth - carousel.clientWidth) {
-        // When we reach the end, reset position to start
-        // Don't immediately jump to 0, but set it to just after the beginning
-        // for a smoother transition appearance
-        currentPosition = 0.1;
-      }
-
-      // Apply the scroll position without triggering scroll events
-      carousel.scrollTo({
-        left: currentPosition,
-        behavior: "auto", // Use 'auto' instead of 'smooth' to prevent snapping
-      });
-
-      setScrollPosition(currentPosition);
-      lastTimestamp = timestamp;
-
-      animationId = requestAnimationFrame(animate);
-    };
-
-    animationId = requestAnimationFrame(animate);
-
-    return () => {
-      cancelAnimationFrame(animationId);
-    };
-  }, [autoScrollPaused]);
 
   // Handle scroll events - decouple from animation frame
   const handleScroll = () => {
     if (!carouselRef.current || isDragging) return;
     // Only update the state if we're manually scrolling
-    if (!autoScrollPaused) {
-      setScrollPosition(carouselRef.current.scrollLeft);
-    }
+    setScrollPosition(carouselRef.current.scrollLeft);
   };
 
   // Calculate the correct transform to center the active slide
@@ -234,7 +177,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Product Carousel Section - Curved Display Style */}
+      {/* Product Carousel Section - Organized with Equal Sizing */}
       <section className="py-12 bg-[rgb(15,15,25)] relative outward-curve-section">
         <div className="container mx-auto px-4 mb-8">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-[rgb(255,229,138)] mb-8">
@@ -242,7 +185,7 @@ export default function Home() {
           </h2>
         </div>
 
-        {/* Outward curved carousel with consistent height */}
+        {/* Outward curved carousel with consistent height and equal sizing */}
         <div className="carousel-container">
           <div
             ref={carouselRef}
@@ -257,6 +200,9 @@ export default function Home() {
             onScroll={handleScroll}
           >
             {productImages.map((image, index) => {
+              // Skip rendering if image doesn't exist or is empty
+              if (!image) return null;
+
               return (
                 <div key={index} className="carousel-item">
                   <div className="card-content">
@@ -267,6 +213,14 @@ export default function Home() {
                       height={400}
                       className="w-full h-full object-cover"
                       draggable="false"
+                      onError={(e) => {
+                        // Hide the parent container if image fails to load
+                        const target = e.target as HTMLImageElement;
+                        const parentItem = target.closest(".carousel-item");
+                        if (parentItem) {
+                          parentItem.style.display = "none";
+                        }
+                      }}
                     />
                   </div>
                 </div>
