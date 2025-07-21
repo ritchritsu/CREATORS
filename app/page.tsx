@@ -61,16 +61,31 @@ const productImages = Array.from(
   (_, i) => `/IMAGES/${i + 1}.jpg`
 );
 
+// Array of China visit images
+const chinaImages = Array.from(
+  { length: 8 },
+  (_, i) => `/IMAGES/China${i + 1}.jpg`
+);
+
 export default function Home() {
   const [activeSlide, setActiveSlide] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const [scrollPosition, setScrollPosition] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
+  
+  // Product carousel refs and state
+  const productCarouselRef = useRef<HTMLDivElement>(null);
+  const [productScrollPosition, setProductScrollPosition] = useState(0);
+  const [productIsDragging, setProductIsDragging] = useState(false);
+  const [productStartX, setProductStartX] = useState(0);
+  const [productScrollLeft, setProductScrollLeft] = useState(0);
+  
+  // China carousel refs and state
+  const chinaCarouselRef = useRef<HTMLDivElement>(null);
+  const [chinaScrollPosition, setChinaScrollPosition] = useState(0);
+  const [chinaIsDragging, setChinaIsDragging] = useState(false);
+  const [chinaStartX, setChinaStartX] = useState(0);
+  const [chinaScrollLeft, setChinaScrollLeft] = useState(0);
 
-  // Function to handle next slide in benefits carousel
+  // Benefits carousel functions
   const nextSlide = useCallback(() => {
     if (isAnimating) return;
     setIsAnimating(true);
@@ -78,7 +93,6 @@ export default function Home() {
     setTimeout(() => setIsAnimating(false), 500);
   }, [isAnimating]);
 
-  // Function to handle previous slide in benefits carousel
   const prevSlide = useCallback(() => {
     if (isAnimating) return;
     setIsAnimating(true);
@@ -92,56 +106,102 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [nextSlide]);
 
-  // Mouse event handlers for dragging
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!carouselRef.current) return;
+  // ======== PRODUCT CAROUSEL HANDLERS ========
+  const handleProductMouseDown = (e: React.MouseEvent) => {
+    if (!productCarouselRef.current) return;
 
-    setIsDragging(true);
-    setStartX(e.pageX - carouselRef.current.offsetLeft);
-    setScrollLeft(carouselRef.current.scrollLeft);
+    setProductIsDragging(true);
+    setProductStartX(e.pageX - productCarouselRef.current.offsetLeft);
+    setProductScrollLeft(productCarouselRef.current.scrollLeft);
   };
 
-  const handleMouseUp = () => {
-    setIsDragging(false);
+  const handleProductMouseUp = () => {
+    setProductIsDragging(false);
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !carouselRef.current) return;
+  const handleProductMouseMove = (e: React.MouseEvent) => {
+    if (!productIsDragging || !productCarouselRef.current) return;
 
     e.preventDefault();
-    const x = e.pageX - carouselRef.current.offsetLeft;
-    const walk = (x - startX) * 1.5; // Scroll speed multiplier
-    carouselRef.current.scrollLeft = scrollLeft - walk;
-    setScrollPosition(carouselRef.current.scrollLeft);
+    const x = e.pageX - productCarouselRef.current.offsetLeft;
+    const walk = (x - productStartX) * 1.5; // Scroll speed multiplier
+    productCarouselRef.current.scrollLeft = productScrollLeft - walk;
+    setProductScrollPosition(productCarouselRef.current.scrollLeft);
   };
 
-  // Touch event handlers for mobile support
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!carouselRef.current) return;
+  const handleProductTouchStart = (e: React.TouchEvent) => {
+    if (!productCarouselRef.current) return;
 
-    setIsDragging(true);
-    setStartX(e.touches[0].pageX - carouselRef.current.offsetLeft);
-    setScrollLeft(carouselRef.current.scrollLeft);
+    setProductIsDragging(true);
+    setProductStartX(e.touches[0].pageX - productCarouselRef.current.offsetLeft);
+    setProductScrollLeft(productCarouselRef.current.scrollLeft);
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging || !carouselRef.current) return;
+  const handleProductTouchMove = (e: React.TouchEvent) => {
+    if (!productIsDragging || !productCarouselRef.current) return;
 
-    const x = e.touches[0].pageX - carouselRef.current.offsetLeft;
-    const walk = (x - startX) * 1.5;
-    carouselRef.current.scrollLeft = scrollLeft - walk;
-    setScrollPosition(carouselRef.current.scrollLeft);
+    const x = e.touches[0].pageX - productCarouselRef.current.offsetLeft;
+    const walk = (x - productStartX) * 1.5;
+    productCarouselRef.current.scrollLeft = productScrollLeft - walk;
+    setProductScrollPosition(productCarouselRef.current.scrollLeft);
   };
 
-  const handleTouchEnd = () => {
-    setIsDragging(false);
+  const handleProductTouchEnd = () => {
+    setProductIsDragging(false);
   };
 
-  // Handle scroll events - decouple from animation frame
-  const handleScroll = () => {
-    if (!carouselRef.current || isDragging) return;
-    // Only update the state if we're manually scrolling
-    setScrollPosition(carouselRef.current.scrollLeft);
+  const handleProductScroll = () => {
+    if (!productCarouselRef.current || productIsDragging) return;
+    setProductScrollPosition(productCarouselRef.current.scrollLeft);
+  };
+
+  // ======== CHINA CAROUSEL HANDLERS ========
+  const handleChinaMouseDown = (e: React.MouseEvent) => {
+    if (!chinaCarouselRef.current) return;
+
+    setChinaIsDragging(true);
+    setChinaStartX(e.pageX - chinaCarouselRef.current.offsetLeft);
+    setChinaScrollLeft(chinaCarouselRef.current.scrollLeft);
+  };
+
+  const handleChinaMouseUp = () => {
+    setChinaIsDragging(false);
+  };
+
+  const handleChinaMouseMove = (e: React.MouseEvent) => {
+    if (!chinaIsDragging || !chinaCarouselRef.current) return;
+
+    e.preventDefault();
+    const x = e.pageX - chinaCarouselRef.current.offsetLeft;
+    const walk = (x - chinaStartX) * 1.5; // Scroll speed multiplier
+    chinaCarouselRef.current.scrollLeft = chinaScrollLeft - walk;
+    setChinaScrollPosition(chinaCarouselRef.current.scrollLeft);
+  };
+
+  const handleChinaTouchStart = (e: React.TouchEvent) => {
+    if (!chinaCarouselRef.current) return;
+
+    setChinaIsDragging(true);
+    setChinaStartX(e.touches[0].pageX - chinaCarouselRef.current.offsetLeft);
+    setChinaScrollLeft(chinaCarouselRef.current.scrollLeft);
+  };
+
+  const handleChinaTouchMove = (e: React.TouchEvent) => {
+    if (!chinaIsDragging || !chinaCarouselRef.current) return;
+
+    const x = e.touches[0].pageX - chinaCarouselRef.current.offsetLeft;
+    const walk = (x - chinaStartX) * 1.5;
+    chinaCarouselRef.current.scrollLeft = chinaScrollLeft - walk;
+    setChinaScrollPosition(chinaCarouselRef.current.scrollLeft);
+  };
+
+  const handleChinaTouchEnd = () => {
+    setChinaIsDragging(false);
+  };
+
+  const handleChinaScroll = () => {
+    if (!chinaCarouselRef.current || chinaIsDragging) return;
+    setChinaScrollPosition(chinaCarouselRef.current.scrollLeft);
   };
 
   // Calculate the correct transform to center the active slide
@@ -177,7 +237,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Product Carousel Section - Organized with Equal Sizing */}
+      {/* Product Carousel Section - Updated with product-specific handlers */}
       <section className="py-12 bg-[rgb(15,15,25)] relative outward-curve-section">
         <div className="container mx-auto px-4 mb-8">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-[rgb(255,229,138)] mb-8">
@@ -188,23 +248,23 @@ export default function Home() {
         {/* Outward curved carousel with consistent height and equal sizing */}
         <div className="carousel-container">
           <div
-            ref={carouselRef}
+            ref={productCarouselRef}
             className="carousel-track hide-scrollbar"
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onMouseMove={handleMouseMove}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-            onScroll={handleScroll}
+            onMouseDown={handleProductMouseDown}
+            onMouseUp={handleProductMouseUp}
+            onMouseLeave={handleProductMouseUp}
+            onMouseMove={handleProductMouseMove}
+            onTouchStart={handleProductTouchStart}
+            onTouchMove={handleProductTouchMove}
+            onTouchEnd={handleProductTouchEnd}
+            onScroll={handleProductScroll}
           >
             {productImages.map((image, index) => {
               // Skip rendering if image doesn't exist or is empty
               if (!image) return null;
 
               return (
-                <div key={index} className="carousel-item">
+                <div key={`product-${index}`} className="carousel-item">
                   <div className="card-content">
                     <Image
                       src={image}
@@ -261,7 +321,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Why Choose Us Section - Fancy Peek Carousel */}
+      {/* Why Choose Us Section - Unchanged */}
       <section className="py-16 bg-[rgb(15,15,25)] overflow-hidden">
         {/* Rest of the component remains unchanged */}
         <div className="container mx-auto px-4">
@@ -447,6 +507,146 @@ export default function Home() {
                 priority
               />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* China Visit Section - Updated with china-specific handlers */}
+      <section className="py-16 bg-[rgb(15,15,25)] relative outward-curve-section">
+        <div className="container mx-auto px-4 mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-[rgb(255,229,138)] mb-8">
+            Our China Visit
+          </h2>
+          <p className="text-xl text-center mb-8 text-[#feffdb] max-w-4xl mx-auto">
+            We visited Zhengzhou Louhe and Xingtai province in China to ensure
+            the highest quality of our products and establish strong partnerships
+            with manufacturers.
+          </p>
+        </div>
+
+        {/* China visit carousel with consistent styling */}
+        <div className="carousel-container">
+          <div
+            ref={chinaCarouselRef}
+            className="carousel-track hide-scrollbar"
+            onMouseDown={handleChinaMouseDown}
+            onMouseUp={handleChinaMouseUp}
+            onMouseLeave={handleChinaMouseUp}
+            onMouseMove={handleChinaMouseMove}
+            onTouchStart={handleChinaTouchStart}
+            onTouchMove={handleChinaTouchMove}
+            onTouchEnd={handleChinaTouchEnd}
+            onScroll={handleChinaScroll}
+          >
+            {chinaImages.map((image, index) => {
+              // Skip rendering if image doesn't exist or is empty
+              if (!image) return null;
+
+              return (
+                <div key={`china-${index}`} className="carousel-item">
+                  <div className="card-content">
+                    <Image
+                      src={image}
+                      alt={`China visit image ${index + 1}`}
+                      width={500}
+                      height={400}
+                      className="w-full h-full object-cover"
+                      draggable="false"
+                      onError={(e) => {
+                        // Hide the parent container if image fails to load
+                        const target = e.target as HTMLImageElement;
+                        const parentItem = target.closest('.carousel-item');
+                        if (parentItem) {
+                          parentItem.style.display = 'none';
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Drag indicator */}
+        <div className="flex justify-center drag-indicator">
+          <span className="text-[rgb(255,229,138)]/70 text-sm flex items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 mr-1 animate-pulse"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M7.707 3.293a1 1 0 010 1.414L5.414 7H11a7 7 0 017 7v2a1 1 0 11-2 0v-2a5 5 0 00-5-5H5.414l2.293 2.293a1 1 0 11-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Drag to explore
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 ml-1 animate-pulse"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M12.293 3.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 9H9a5 5 0 00-5 5v2a1 1 0 11-2 0v-2a7 7 0 017-7h5.586l-2.293-2.293a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </span>
+        </div>
+
+        {/* Quality Assurance Points - Unchanged */}
+        <div className="container mx-auto px-4 mt-12">
+          <div className="bg-[rgb(25,25,35)] p-6 rounded-lg shadow-xl border border-[rgb(255,229,138)]/10 max-w-4xl mx-auto">
+            <h3 className="text-2xl font-bold mb-6 text-[rgb(255,229,138)] text-center">
+              Our Quality Assurance Process
+            </h3>
+
+            <ul className="space-y-3 text-[#feffdb]">
+              <li className="flex items-start">
+                <div className="bg-[rgb(255,229,138)]/10 p-2 rounded-full mr-4 mt-1">
+                  <span className="text-[rgb(255,229,138)] font-bold">1</span>
+                </div>
+                <p>To ensure quality of materials used</p>
+              </li>
+              <li className="flex items-start">
+                <div className="bg-[rgb(255,229,138)]/10 p-2 rounded-full mr-4 mt-1">
+                  <span className="text-[rgb(255,229,138)] font-bold">2</span>
+                </div>
+                <p>To check the consumables, electrical, design and controls</p>
+              </li>
+              <li className="flex items-start">
+                <div className="bg-[rgb(255,229,138)]/10 p-2 rounded-full mr-4 mt-1">
+                  <span className="text-[rgb(255,229,138)] font-bold">3</span>
+                </div>
+                <p>Collaborate designs depending on the client's requirements</p>
+              </li>
+              <li className="flex items-start">
+                <div className="bg-[rgb(255,229,138)]/10 p-2 rounded-full mr-4 mt-1">
+                  <span className="text-[rgb(255,229,138)] font-bold">4</span>
+                </div>
+                <p>
+                  Legitimacy and capability of the supplier to provide quality
+                  machines
+                </p>
+              </li>
+              <li className="flex items-start">
+                <div className="bg-[rgb(255,229,138)]/10 p-2 rounded-full mr-4 mt-1">
+                  <span className="text-[rgb(255,229,138)] font-bold">5</span>
+                </div>
+                <p>Timely updates about the production of the machines</p>
+              </li>
+              <li className="flex items-start">
+                <div className="bg-[rgb(255,229,138)]/10 p-2 rounded-full mr-4 mt-1">
+                  <span className="text-[rgb(255,229,138)] font-bold">6</span>
+                </div>
+                <p>Delivery updates</p>
+              </li>
+            </ul>
           </div>
         </div>
       </section>

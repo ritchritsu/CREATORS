@@ -134,7 +134,7 @@ const Footer = () => {
                 ></i>
                 <div>
                   <div>Landline: 02-82341680</div>
-                  <div>Celphone: 09958494580/09454922747</div>
+                  <div>Celphone: (0927)114-1058 / (0995)849-4580</div>
                 </div>
               </li>
               <li className="flex items-center group transition-all duration-300 hover:translate-x-2">
